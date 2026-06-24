@@ -18,24 +18,24 @@ Now we're going to be going over A TON of information for this lab. I'm familiar
 
 So with that being said, I needed to get familiar with AWS' Terraform environment. Before we even do that, we need to install Terraform on our local machine. But even before that, we need to install the AWS Cloud Shell into our local machine as well so lets get started with those things. We'll begin with the AWS download. Go to Google and enter AWS Windows Installer. 
 
-![Install AWS Cloud Shell](OnePercentWeek5Day1_Task1.png)
+![Install AWS Cloud Shell](images/OnePercentWeek5Day1_Task1.png)
 
 Copy and paste the installer command in Command Prompt (CMD) to install the AWS Bash CLI. Restart CMD or VS Code and then run `aws --version` to confirm the CLI is installed. 
 
-![Verifies AWS has been installed](OnePercentWeek5Day1_Task2.png)
+![Verifies AWS has been installed](images/OnePercentWeek5Day1_Task2.png)
 
 Lets do the same with Terraform which was a little more involved. Go to the website and download your respective installer (I'm on a Windows device so I chose AMD64).
 
 
-![Install Terraform](OnePercentWeek5Day1_Task3.png)
+![Install Terraform](images/OnePercentWeek5Day1_Task3.png)
 
 Now, you need to take your `terraform.exe` file and create a path for it. I was instructed to create a separate folder for Terraform (C:\Terraform\). Follow the instructions below and save your new path. 
 
-![Environment path for Terraform](OnePercentWeek5Day1_Task4.png)
+![Environment path for Terraform](images/OnePercentWeek5Day1_Task4.png)
 
 Once you restart CMD, you can run `terraform -version` to make sure it's installed. 
 
-![Terraform verification](OnePercentWeek5Day1_Task5.png)
+![Terraform verification](images/OnePercentWeek5Day1_Task5.png)
 
 Way too much work but wait, there's more! Lets move to configuring the AWS console so we can actually connect our Terraform commands to AWS.
 
@@ -45,7 +45,7 @@ Now, lets connect to AWS. We can use `aws configure` to input our credentials in
 
 Once you're done, use `aws sts get-caller-identity` in order to see that you're logged in. 
 
-![Verify AWS login](OnePercentWeek5Day1_Task6.png)
+![Verify AWS login](images/OnePercentWeek5Day1_Task6.png)
 
 Alright, NOW we can finally get over to the Terraform part of the lab!
 
@@ -56,11 +56,11 @@ Before we start up Terraform, lets go over the main files for Terraform: provide
 
 We'll start with the providers.tf file. It tells us which providers (whether Azure, AWS, or even Docker) we'll be using to construct our infrastructure. It also tells us which Terraform (TF) version we should be using and for AWS, it asks us for our region. This is great because Azure asks for the region for almost all the resources so this makes things easier for us to code. 
 
-![providers.tf file](OnePercentWeek5Day1_Task7.png)
+![providers.tf file](images/OnePercentWeek5Day1_Task7.png)
 
 The main.tf file is where the meat and potatoes are. This is where we define our resources that we want to be created. It usually has the format resource "name_of_resource" "resource_arbitrary_name" {}. Then, everything inside the bracket is what we need to code to define our resource. Each resource has mandatory values and optional values. You use that arbitrary name to call upon THAT particular resource. You might need a parameter of the resource so you use that name to specifically call those parameters. 
 
-![providers.tf file](OnePercentWeek5Day1_Task8.png)
+![providers.tf file](images/OnePercentWeek5Day1_Task8.png)
 
 Lastly, we have the optional outputs.tf file. This is where we tell TF what information we want to see after it's done creating the resources. I want the IP addresses of my EC2 instances and the name of the my S3 bucket so that goes into this file. We also have a variables.tf file which is where we make names and default values for variables that we can use throughout our files. We call upon those variables using the format `var.<variable_name>`.  This makes called on strings and values WAY easier to remember. This was extremely useful in Azure. Not as much in this AWS lab. 
 
@@ -72,7 +72,7 @@ Now, we need to create an EC2 instance using TF. Our next lab which is based on 
 
 We have to define the AWS resource, AMI, which subnet it belongs to, the side of the instacce, the security group, and our key pair that we'll use to SSH into the machine. 
 
-![EC2 instance main.tf](OnePercentWeek5Day1_Task9.png)
+![EC2 instance main.tf](images/OnePercentWeek5Day1_Task9.png)
 
 I did create a variables.tf file to pass along the subnet ID, name, public key, and SG to the instance. I chose the instance ID and IP address for the outputs. That's all I really need. 
 
@@ -90,7 +90,7 @@ This considerably shrinks your main.tf file and gives you more flexibility while
 Lets talk file structure now. You have to create a main.tf file for each one of your modules. You may need to create a variables.tf and outputs.tf file for each module as well. You'll have an overall (or root) main.tf, providers.tf, variables.tf, and outputs.tf file but within that same directory, you'll have a modules directory. under that directory, you create all of your module names. Mine were network, s3, security_group, and ec2_instance. Then you create a main.tf file under those directories. 
 
 
-![tree structure](OnePercentWeek5Day1_Task10.png)
+![tree structure](images/OnePercentWeek5Day1_Task10.png)
 
 I would advise using a mix of mkdir -p and the brackets {} to create all of the files and folders pretty quickly instead of manually typing this information out for each module. for example, you can perhaps do 
 
@@ -106,7 +106,7 @@ PHEW! Alright, now just like in a regular main.tf file, you go and configure you
 
 Etc, etc. Lets look at the structure of the modules in the root main.tf file. 
 
-![Module structure](OnePercentWeek5Day1_Task11.png)
+![Module structure](images/OnePercentWeek5Day1_Task11.png)
 
 I chose to look at our EC2 module because you see we were able to name our module specifically and call the source of where we're getting our module from. The source is the general module format we created and then in this specifically named module, we can feed our general module custom information. 
 
@@ -117,7 +117,7 @@ How useful is that!
 
 Now I want to comment on the root output.tf file because this was a bit confusing at first. 
 
-![Main outputs.tf explanation](OnePercentWeek5Day1_Task12.png)
+![Main outputs.tf explanation](images/OnePercentWeek5Day1_Task12.png)
 
 Since the EC2 module itself has outputs, how do we call specifically the output for each specific EC2 module we create? We have to call the module, then module specific name, and THEN the output that we were looking for. So we're always able to get the information that we want. 
 
@@ -127,32 +127,32 @@ Now, for the fun part. Lets actually deploy our Infrastructure as Code (IaC)!
 
 First, we have to get TF running so run the command `terraform init`. 
 
-![terraform init](OnePercentWeek5Day1_Task13.png)
+![terraform init](images/OnePercentWeek5Day1_Task13.png)
 
 You should get a confirmation message from this. Now lets use `terraform validate` and `terraform plan` to make sure our syntax is good and confirm that TF knows what it will be creating. 
 
-![terraform validate](OnePercentWeek5Day1_Task14.png)
+![terraform validate](images/OnePercentWeek5Day1_Task14.png)
 
-![terraform plan](OnePercentWeek5Day1_Task15.png)
+![terraform plan](images/OnePercentWeek5Day1_Task15.png)
 
 Now, lets actually deploy it all. Run `terraform apply --auto-approve` and sit back. 
 
-![terraform apply](OnePercentWeek5Day1_Task16.png)
+![terraform apply](images/OnePercentWeek5Day1_Task16.png)
 
 You can verify in the AWS console that your resources have been created. Also, lets SSH into our master node to make sure the EC2 instance actually works. 
 
-![AWS Console Resource Verification](OnePercentWeek5Day1_Task17.png)
+![AWS Console Resource Verification](images/OnePercentWeek5Day1_Task17.png)
 
 
-![Master node SSH verification](OnePercentWeek5Day1_Task18.png)
+![Master node SSH verification](images/OnePercentWeek5Day1_Task18.png)
 
 Super useful. Now that we know everything works, run `terraform destroy --auto-approve` to delete everything. 
 
-![terraform destroy](OnePercentWeek5Day1_Task19.png)
+![terraform destroy](images/OnePercentWeek5Day1_Task19.png)
 
 Then confirm in the AWS console that the resources are no longer there. 
 
-![AWS Console Resource Deletion Verification](OnePercentWeek5Day1_Task20.png)
+![AWS Console Resource Deletion Verification](images/OnePercentWeek5Day1_Task20.png)
 
 Terraform is so useful! Hopefully you're a believer. We're going to use this same reusable IaC to run our Ansible lab next. 
 
